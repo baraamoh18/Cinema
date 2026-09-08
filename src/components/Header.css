@@ -75,6 +75,31 @@
   background-color: #f40612;
 }
 
+.header__right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.header__auth {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header__user-email {
+  color: #b3b3b3;
+  font-size: 0.85rem;
+}
+
+.header__logout-btn, .header__login-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 0;
+}
+
 @media (max-width: 640px) {
   .header {
     flex-direction: column;
@@ -84,6 +109,11 @@
 
   .header__nav {
     justify-content: center;
+  }
+
+  .header__right {
+    flex-direction: column;
+    width: 100%;
   }
 
   .header__search {

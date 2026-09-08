@@ -24,12 +24,15 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 
 // Add a movie to favourites
-export const addFavourite = async (movie: Movie): Promise<void> => {
+export const addFavourite = async (userId: string, movie: Movie): Promise<void> => {
   try {
+    if (!userId) {
+      throw new Error("User ID is required to add a favourite");
+    }
     if (!movie.imdbID) {
       throw new Error("Movie is missing an imdbID");
     }
-    const movieRef = ref(database, `favourites/${movie.imdbID}`);
+    const movieRef = ref(database, `users/${userId}/favourites/${movie.imdbID}`);
     await set(movieRef, movie);
   } catch (error: any) {
     throw new Error(`Failed to add movie to favourites: ${error.message}`);
@@ -37,12 +40,15 @@ export const addFavourite = async (movie: Movie): Promise<void> => {
 };
 
 // Remove a movie from favourites by imdbID
-export const removeFavourite = async (imdbID: string): Promise<void> => {
+export const removeFavourite = async (userId: string, imdbID: string): Promise<void> => {
   try {
+    if (!userId) {
+      throw new Error("User ID is required to remove a favourite");
+    }
     if (!imdbID) {
       throw new Error("imdbID is required to remove a favourite");
     }
-    const movieRef = ref(database, `favourites/${imdbID}`);
+    const movieRef = ref(database, `users/${userId}/favourites/${imdbID}`);
     await remove(movieRef);
   } catch (error: any) {
     throw new Error(`Failed to remove movie from favourites: ${error.message}`);
@@ -50,9 +56,12 @@ export const removeFavourite = async (imdbID: string): Promise<void> => {
 };
 
 // Get all favourite movies
-export const getFavourites = async (): Promise<Movie[]> => {
+export const getFavourites = async (userId: string): Promise<Movie[]> => {
   try {
-    const favouritesRef = ref(database, 'favourites');
+    if (!userId) {
+      throw new Error("User ID is required to get favourites");
+    }
+    const favouritesRef = ref(database, `users/${userId}/favourites`);
     const snapshot = await get(favouritesRef);
     if (snapshot.exists()) {
       const data = snapshot.val();

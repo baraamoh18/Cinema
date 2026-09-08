@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { getMovies, initialMovies, type Movie } from './HomeModel';
 import { saveFavourite } from '../Favourites/FavouritesModel';
+import { useAuth } from '../../context/AuthContext';
 
 export const useHomeViewModel = () => {
     const [searchParams] = useSearchParams();
     const searchQuery = searchParams.get('search') || '';
+    const navigate = useNavigate();
+    const { user } = useAuth();
 
     const [query, setQuery] = useState<string>(searchQuery);
     const [movies, setMovies] = useState<Movie[]>([]);
@@ -52,8 +55,13 @@ export const useHomeViewModel = () => {
     const [toastMessage, setToastMessage] = useState<string | null>(null);
 
     const handleAddToFavourites = async (movie: Movie) => {
+        if (!user) {
+            navigate('/favourites');
+            return;
+        }
+
         try {
-            await saveFavourite(movie);
+            await saveFavourite(user.uid, movie);
             setToastMessage(`"${movie.Title}" was added to favourites!`);
             setTimeout(() => setToastMessage(null), 3000);
         } catch (err: any) {

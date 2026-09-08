@@ -11,11 +11,20 @@ interface MovieCardProps {
 const MovieCard: React.FC<MovieCardProps> = ({ movie, onAction, actionLabel = 'Favourite' }) => {
   return (
     <div className="movie-card">
-      <img
-        src={movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/150'}
-        alt={movie.Title}
-        className="movie-card__poster"
-      />
+      <div className="movie-card__poster-wrapper">
+        <img
+          src={movie.Poster !== 'N/A' ? movie.Poster : ''}
+          alt={movie.Title}
+          className="movie-card__poster"
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).style.display = 'none';
+            (e.currentTarget.nextSibling as HTMLElement | null)?.style.setProperty('display', 'flex');
+          }}
+        />
+        <div className="movie-card__poster-fallback" style={{ display: 'none' }}>
+          🎬
+        </div>
+      </div>
       <div className="movie-card__info">
         <h3 className="movie-card__title">{movie.Title}</h3>
         <p className="movie-card__year">Year: {movie.Year}</p>
